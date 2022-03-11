@@ -7,7 +7,7 @@ client.build().then(c => {
 })
 
 client.createHttpRequest({
-    targetUrl: "http://finaction.fr",
+    targetUrl: "http://kremlin.ru",
     repeat: 10000,
     requestDelay: 1000,
     defaultSettings: true
