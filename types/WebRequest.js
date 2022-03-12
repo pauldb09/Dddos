@@ -72,7 +72,7 @@ class WebRequest extends EventEmitter {
                         method: method,
                         headers: { "User-Agent": randomUseragent.getRandom() },
                     }).then(req => {
-                        console.debug(`Got ${req.status}`)
+                        this.emit("debug", `Got ${req.status} for the request with Id ${this._uid}`)
                     })
                 } catch (error) {
                     this.errored++;
