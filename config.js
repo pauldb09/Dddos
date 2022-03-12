@@ -1,9 +1,9 @@
 module.exports = {
     target: {
-        targetUrl: "https://green-bot.app",
-        requestDelay: 1400,
-        repeat: 1000,
-        abortNumber: 50,
+        targetUrl: "https://date-egirl.ml/",
+        requestDelay: 400,
+        repeat: 2220,
+        abortNumber: 10,
         defaultSettings: true
     },
     httpMethod: "GET",
