@@ -1,6 +1,10 @@
 # Dddos-Script
+
 This is a little script to ddos a website. This is for example purposes only. I am not responsable of what you do with it
-[](https://cdn.discordapp.com/attachments/892498825611202640/952160929498423327/unknown.png)
+
+If you like this repo, feel free to add a ⭐ and follow me on github, it actually helps me a lot!
+
+What is ddos? Ddos is an attack on a website by sending alot of requests
 
 # How it works?
 
