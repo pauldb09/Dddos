@@ -1,6 +1,6 @@
 # Dddos-Script
 This is a little script to ddos a website. This is for example purposes only. I am not responsable of what you do with it
-[](https://cdn.discordapp.com/attachments/892498825611202640/952160929498423327/unknown.png)
+![](https://cdn.discordapp.com/attachments/892498825611202640/952160929498423327/unknown.png)
 
 # How it works?
 
