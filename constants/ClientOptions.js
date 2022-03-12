@@ -1,4 +1,4 @@
-const { CustomHeader } = require("./CustomHeader.js")
+const  CustomHeader = require("./CustomHeader.js")
 const CustomError = require("../types/Error")
 
 class ClientOptions {
