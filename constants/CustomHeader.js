@@ -6,7 +6,6 @@ class CustomHeader {
         this.library = "node-fetch" | "got";
         this.cookieContent = "";
         this.requestHeader = "";
-
     }
 }
 module.exports = CustomHeader
