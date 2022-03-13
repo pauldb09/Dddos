@@ -54,6 +54,7 @@ class WebRequest extends EventEmitter {
         this.emit("debug", "[Web request] Starting the request")
         const options = this.options
         const method = this.method
+<<<<<<< Updated upstream
         for (this; this.executed < options.repeat; this.executed++) {
             if (this.executed == options.repeat) {
                 this.status = Constants.REQUEST_SENT;
@@ -64,6 +65,48 @@ class WebRequest extends EventEmitter {
                 this.status = Constants.REQUEST_ERRORED;
                 this.emit("requestClosed", this._uid, `Reached "abortNumber" limit.`)
                 return new CustomError("More than 10 failed requests. Stopping the attack.")
+=======
+        this.interval = setInterval(async() => {
+            if (this.status !== Constants.REQUEST_READY) return this.emit("close", {
+                id: this._uid,
+                reason: `The request request is not ready yet`,
+                code: 500
+            })
+            if (this.executed >= options.repeat) {
+                this.status = Constants.REQUEST_SENT;
+                this.delay(1500)
+                this.emit("close", {
+                    id: this._uid,
+                    reason: `The request is finished. Executed ${this.executed} times for ${this.errored} errored requests`,
+                    code: 200
+                })
+                return;
+            }
+            if (this.errored >= options.abortNumber) {
+                this.status = Constants.REQUEST_SENT;
+                this.delay(2500)
+                this.emit("close", {
+                    id: this._uid,
+                    reason: `Reached "abortNumber" limit.`,
+                    code: 500
+                })
+                return;
+            }
+            try {
+                this.executed++;
+                this.emit("debug", "[Web request] Attempting to " + method + " the following Url:  " + options.targetUrl + "")
+                cf.request({
+                    url: options.targetUrl,
+                    method: method,
+                    headers: this._client.options.header ? this._client.options.header : { "User-Agent": randomUseragent.getRandom() },
+                }).then(req => {
+                    if (req.statusCode > 300) this.errored++;
+                    this.emit("debug", `Got ${req.statusCode} for the request with Id ${this._uid}`)
+                })
+            } catch (error) {
+                console.log(error)
+                this.errored++;
+>>>>>>> Stashed changes
             }
             setTimeout(async() => {
                 try {
