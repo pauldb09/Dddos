@@ -1,0 +1,28 @@
+{
+    "name": "ddos-tool",
+    "version": "1.4.0",
+    "description": "An easy package to ddos a site. Cloudfare byppas. Don't ddos a website without the owner consent.",
+    "main": "app.js",
+    "scripts": {
+        "test": "node app"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pauldb09/Dddos-Example.git"
+    },
+    "keywords": [
+        "ddos"
+    ],
+    "author": "Pauldb09",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/pauldb09/Dddos-Example/issues"
+    },
+    "homepage": "https://github.com/pauldb09/Dddos-Example#readme",
+    "dependencies": {
+        "cloudflare-bypasser": "^0.0.3",
+        "random-useragent": "^0.5.0",
+        "ddos-guard-bypass": "^1.0.7",
+        "got": "^12.0.1"
+    }
+}

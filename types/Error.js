@@ -1,9 +1,15 @@
+const BaseError = require("../constants/BaseError")
+
 class CustomError {
     constructor(error) {
-        if (typeof error == "string") {
-            throw new Error(error)
+        if (BaseError.error) {
+            throw new Error(BaseError.error)
         } else {
-            throw new Error("An uknown error has occured! " + error + "")
+            if (typeof error == "string") {
+                throw new Error(error)
+            } else {
+                throw new Error("An uknown error has occured! " + error + "")
+            }
         }
     }
 }
