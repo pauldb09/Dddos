@@ -4,6 +4,8 @@ This is a little script to ddos a website. This is for example purposes only. I 
 
 If you like this repo, feel free to add a ⭐ and follow me on github, it actually helps me a lot!
 
+If you need any help while installing it, join <a href="https://discord.gg/Wkbpa4y8JW">this server</a> and you will be helped!
+
 What is ddos? Ddos is an attack on a website by sending alot of requests
 
 # How it works?

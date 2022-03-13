@@ -17,6 +17,7 @@ client.build()
 client.on("requestDebug", msg => {
     console.log(msg)
 })
-client.on("WebRequestClosed", (id, reason) => {
-    console.log(`Web request with id ${id} closed with reason ${reason}`)
+client.on("WebRequestClosed", (event) => {
+    console.log(event)
+    console.log(`Web request with id ${event.id} closed with reason ${event.reason}`)
 })
