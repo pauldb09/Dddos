@@ -1,6 +1,7 @@
 const ClientOptions = require("../constants/ClientOptions.js")
 const WebRequest = require("../types/WebRequest")
 const EventEmitter = require('node:events');
+const ipManager = require("./ip.js")
 const CustomError = require("../types/Error")
 
 
@@ -9,15 +10,27 @@ class Client extends EventEmitter {
         super();
         this._ready = false;
         this.isReady = false;
+        this.ipSwitcher = null;
         this.requests = new Map()
         this.options = new ClientOptions(options)
     }
 
     async build() {
         if (this._ready) return new CustomError("Requested to build the client but it's already ready.")
-        this._ready = true;
-        this.isReady = true
-        this.emit("clientReady", true)
+
+        if (this.options.rotatingIp) {
+            this.ipSwitcher = new ipManager()
+            setTimeout(() => {
+                this.ipSwitcher.build({ timeout: 1000 * 60 }) // Change every 1m
+                this._ready = true;
+                this.isReady = true
+                this.emit("clientReady", true)
+            }, 2000);
+        } else {
+            this._ready = true;
+            this.isReady = true
+            this.emit("clientReady", true)
+        }
         return this
     }
 
